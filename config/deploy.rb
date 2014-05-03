@@ -5,7 +5,7 @@ require 'thinking_sphinx/deploy/capistrano'
 default_run_options[:pty] = true
 set :keep_releases, 5
 set :application, "My store"
-set :repository,  "git@github.com:RubifyTechnology/hpstar.git"
+set :repository,  "git@github.com:khacluan/my_store.git"
 set :scm, :git
 set :rake,  "bundle exec rake"
 set :stages, ["staging", "production"]
@@ -16,23 +16,23 @@ set :rake,  "bundle exec rake"
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
 
-load 'deploy/assets'
+# load 'deploy/assets'
 
-after 'deploy:finalize_update', 'deploy:symlink_share', 'deploy:migrate_database', 'sphinx:symlink_indexes'
-after "deploy:update", "deploy:cleanup"
+# after 'deploy:finalize_update', 'deploy:symlink_share', 'deploy:migrate_database', 'sphinx:symlink_indexes'
+# after "deploy:update", "deploy:cleanup"
 # before 'deploy:update_code', 'thinking_sphinx:stop'
 # after 'deploy:update_code', 'thinking_sphinx:start'
 after  "deploy:restart", "delayed_job:restart"
 
-def remote_file_exists?(full_path)
-  'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
-end
+# def remote_file_exists?(full_path)
+#   'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+# end
 
 namespace :deploy do
   desc "Zero-downtime restart of Unicorn"  
   task :restart, :roles => :web do
-    if remote_file_exists?("#{shared_path}/pids/hpstar.pid")
-      run "kill -s QUIT `cat #{shared_path}/pids/hpstar.pid`"
+    if remote_file_exists?("#{shared_path}/pids/my_store.pid")
+      run "kill -s QUIT `cat #{shared_path}/pids/my_store.pid`"
     end
     run "cd #{current_path} ; bundle exec unicorn -c config/unicorn.rb -D -E #{rails_env}"
   end
@@ -45,7 +45,7 @@ namespace :deploy do
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
-    run "kill -s QUIT `cat #{shared_path}/pids/hpstar.pid`"
+    run "kill -s QUIT `cat #{shared_path}/pids/my_store.pid`"
   end  
     
   namespace :assets do
@@ -85,24 +85,24 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
     
     ## Copy file to the shared locales folder
-    run "mkdir -p #{shared_path}/config/locales"
-    run "cp #{release_path}/config/locales/devise.en.yml #{shared_path}/config/locales"
-    run "cp #{release_path}/config/locales/dynamic_form.en.yml #{shared_path}/config/locales"
-    run "cp #{release_path}/config/locales/en.yml #{shared_path}/config/locales"
-    run "cp #{release_path}/config/locales/rubify_dashboard.en.yml #{shared_path}/config/locales"
-    ## Remove locales folder and link it back from shared locales
-    run "rm -rf #{release_path}/config/locales"
-    run "ln -nfs #{shared_path}/config/locales #{release_path}/config/locales"
+    # run "mkdir -p #{shared_path}/config/locales"
+    # run "cp #{release_path}/config/locales/devise.en.yml #{shared_path}/config/locales"
+    # run "cp #{release_path}/config/locales/dynamic_form.en.yml #{shared_path}/config/locales"
+    # run "cp #{release_path}/config/locales/en.yml #{shared_path}/config/locales"
+    # run "cp #{release_path}/config/locales/rubify_dashboard.en.yml #{shared_path}/config/locales"
+    # ## Remove locales folder and link it back from shared locales
+    # run "rm -rf #{release_path}/config/locales"
+    # run "ln -nfs #{shared_path}/config/locales #{release_path}/config/locales"
     
-    ## link sale tools folder
-    run "mkdir -p #{shared_path}/sale_tools"
-    run "rm -rf #{release_path}/public/sale_tools"
-    run "ln -nfs #{shared_path}/sale_tools #{release_path}/public/sale_tools"
+    # ## link sale tools folder
+    # run "mkdir -p #{shared_path}/sale_tools"
+    # run "rm -rf #{release_path}/public/sale_tools"
+    # run "ln -nfs #{shared_path}/sale_tools #{release_path}/public/sale_tools"
     
-    ## link team commerical folder
-    run "mkdir -p #{shared_path}/team_commercial"
-    run "rm -rf #{release_path}/public/team_commercial"
-    run "ln -nfs #{shared_path}/team_commercial #{release_path}/public/team_commercial"
+    # ## link team commerical folder
+    # run "mkdir -p #{shared_path}/team_commercial"
+    # run "rm -rf #{release_path}/public/team_commercial"
+    # run "ln -nfs #{shared_path}/team_commercial #{release_path}/public/team_commercial"
     
   end
   
@@ -128,29 +128,29 @@ namespace :deploy do
   end
 end
 
-namespace :sphinx do
-  task :symlink_indexes, :roles => [:app] do
-    run "mkdir -p #{shared_path}/sphinx"
-    run "ln -nfs #{shared_path}/sphinx #{release_path}/db/sphinx"
-  end
-end
+# namespace :sphinx do
+#   task :symlink_indexes, :roles => [:app] do
+#     run "mkdir -p #{shared_path}/sphinx"
+#     run "ln -nfs #{shared_path}/sphinx #{release_path}/db/sphinx"
+#   end
+# end
 
-namespace :delayed_job do
-  desc "Start delayed_job process"
-  task :start do
-		p "Starting Delayed Job"
-    run "cd #{current_path} && RAILS_ENV=#{rails_env} script/delayed_job start"
-  end
+# namespace :delayed_job do
+#   desc "Start delayed_job process"
+#   task :start do
+# 		p "Starting Delayed Job"
+#     run "cd #{current_path} && RAILS_ENV=#{rails_env} script/delayed_job start"
+#   end
 
-  desc "Stop delayed_job process"
-  task :stop do
-		p "Stopping Delayed Job"
-    run "cd #{current_path} && RAILS_ENV=#{rails_env} script/delayed_job stop"
-  end
+#   desc "Stop delayed_job process"
+#   task :stop do
+# 		p "Stopping Delayed Job"
+#     run "cd #{current_path} && RAILS_ENV=#{rails_env} script/delayed_job stop"
+#   end
 
-  desc "Restart delayed_job process"
-  task :restart do
-		p "Restarting Delayed Job"
-    run "cd #{current_path} && RAILS_ENV=#{rails_env} script/delayed_job restart"
-  end
-end
+#   desc "Restart delayed_job process"
+#   task :restart do
+# 		p "Restarting Delayed Job"
+#     run "cd #{current_path} && RAILS_ENV=#{rails_env} script/delayed_job restart"
+#   end
+# end
