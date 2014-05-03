@@ -48,6 +48,12 @@ GEM
       sass (~> 3.3)
       thor
     builder (3.0.4)
+    capistrano (2.15.5)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -71,6 +77,7 @@ GEM
     has_scope (0.6.0.rc)
       actionpack (>= 3.2, < 5)
       activesupport (>= 3.2, < 5)
+    highline (1.6.21)
     hike (1.2.3)
     i18n (0.6.9)
     inherited_resources (1.4.1)
@@ -96,6 +103,13 @@ GEM
     mime-types (1.25.1)
     multi_json (1.9.3)
     mysql2 (0.3.15)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.9.0)
+    net-ssh-gateway (1.2.0)
+      net-ssh (>= 2.6.5)
     orm_adapter (0.5.0)
     polyamorous (0.5.0)
       activerecord (~> 3.0)
@@ -165,6 +179,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeadmin
+  capistrano (= 2.15.5)
   coffee-rails (~> 3.2.1)
   jquery-rails (= 2.1.4)
   meta_search (>= 1.1.0.pre)
