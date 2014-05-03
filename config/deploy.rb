@@ -1,6 +1,6 @@
 require 'bundler/capistrano'
 require 'capistrano/ext/multistage'
-require 'thinking_sphinx/deploy/capistrano'
+# require 'thinking_sphinx/deploy/capistrano'
 
 default_run_options[:pty] = true
 set :keep_releases, 5
@@ -103,7 +103,6 @@ namespace :deploy do
     # run "mkdir -p #{shared_path}/team_commercial"
     # run "rm -rf #{release_path}/public/team_commercial"
     # run "ln -nfs #{shared_path}/team_commercial #{release_path}/public/team_commercial"
-    
   end
   
   namespace :web do
